@@ -1,12 +1,18 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Text, View, TouchableOpacity } from "react-native";
 import { Camera } from "expo-camera";
+import {
+  FontAwesome,
+  Ionicons,
+  MaterialCommunityIcons,
+} from "@expo/vector-icons";
 
 export default function App() {
   const [hasPermission, setHasPermission] = useState(null);
   const [cameraRef, setCameraRef] = useState(null);
   const [type, setType] = useState(Camera.Constants.Type.back);
-  const [flashMode, setFlashMode] = useState("on");
+  const [flashMode, setFlashMode] = useState(Camera.Constants.FlashMode.on);
+  const [autoFocus, setAutoFocus] = useState(Camera.Constants.AutoFocus.on);
 
   // this will get permission from user to access camera
   useEffect(() => {
@@ -35,19 +41,39 @@ export default function App() {
           setCameraRef(ref);
         }}
         flashMode={flashMode}
+        autoFocus={autoFocus}
       >
         <View
           style={{
             flex: 1,
             backgroundColor: "transparent",
-            justifyContent: "flex-end",
+            justifyContent: "center",
           }}
         >
           <TouchableOpacity
             style={{
               flex: 0.1,
               alignSelf: "center",
-              
+            }}
+            onPress={() => {
+              setFlashMode(
+                type === Camera.Constants.FlashMode.on
+                  ? Camera.Constants.FlashMode.off
+                  : Camera.Constants.FlashMode.on
+              );
+            }}
+          >
+            <Text style={{ fontSize: 18, marginBottom: 10, color: "white" }}>
+              {" "}
+              Flash{" "}
+            </Text>
+          </TouchableOpacity>
+
+          {/* alternate code for flipping the camera front to back */}
+          {/* <TouchableOpacity
+            style={{
+              flex: 0.1,
+              alignSelf: "flex-end",
             }}
             onPress={() => {
               setType(
@@ -61,10 +87,10 @@ export default function App() {
               {" "}
               Flip{" "}
             </Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
 
-          {/* code for button press */}
-          <TouchableOpacity
+          {/* touchable button for taking photo */}
+          {/* <TouchableOpacity
             style={{ alignSelf: "center", marginBottom: 50 }}
             onPress={async () => {
               if (cameraRef) {
@@ -96,7 +122,65 @@ export default function App() {
                 }}
               ></View>
             </View>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
+          <View
+            style={{
+              flex: 1,
+              flexDirection: "row",
+              justifyContent: "space-between",
+              margin: 20,
+            }}
+          >
+            <TouchableOpacity
+              style={{
+                alignSelf: "flex-end",
+                alignItems: "center",
+                backgroundColor: "transparent",
+              }}
+            >
+              <Ionicons
+                name="ios-photos"
+                style={{ color: "#fff", fontSize: 40 }}
+              />
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={{
+                alignSelf: "flex-end",
+                alignItems: "center",
+                backgroundColor: "transparent",
+              }}
+            >
+              <FontAwesome
+                name="camera"
+                style={{ color: "#fff", fontSize: 40 }}
+                onPress={async () => {
+                  if (cameraRef) {
+                    let photo = await cameraRef.takePictureAsync();
+                    console.log("photo", photo);
+                  }
+                }}
+              />
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={{
+                alignSelf: "flex-end",
+                alignItems: "center",
+                backgroundColor: "transparent",
+              }}
+            >
+              <MaterialCommunityIcons
+                name="camera-switch"
+                style={{ color: "#fff", fontSize: 40 }}
+                onPress={() => {
+                  setType(
+                    type === Camera.Constants.Type.back
+                      ? Camera.Constants.Type.front
+                      : Camera.Constants.Type.back
+                  );
+                }}
+              />
+            </TouchableOpacity>
+          </View>
         </View>
       </Camera>
     </View>
