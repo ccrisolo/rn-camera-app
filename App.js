@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { Text, View, TouchableOpacity } from "react-native";
 import { Camera } from "expo-camera";
 import {
@@ -32,8 +32,8 @@ export default function App() {
   return (
     <View style={{ flex: 1 }}>
       {/* Camera component type is for selecting the type of camera, front or back, using constants provided by 
-      Camera.Constants.Type.back. ref prop is set to a state so that different methods can provided by this 
-      instance of camera component can be used (e.g. cameraRef.takePictureAsunc()) */}
+      Camera.Constants.Type.back. ref prop is set to a state so that different methods provided to this 
+      instance of camera component can be used (e.g. takePictureAsync()) */}
       <Camera
         style={{ flex: 1 }}
         type={type}
@@ -53,20 +53,26 @@ export default function App() {
           <TouchableOpacity
             style={{
               flex: 0.1,
-              alignSelf: "center",
+              alignSelf: "flex-end",
+              paddingTop: 90,
+              marginRight: 30,
             }}
             onPress={() => {
               setFlashMode(
-                type === Camera.Constants.FlashMode.on
+                flashMode === Camera.Constants.FlashMode.on
                   ? Camera.Constants.FlashMode.off
                   : Camera.Constants.FlashMode.on
               );
             }}
           >
-            <Text style={{ fontSize: 18, marginBottom: 10, color: "white" }}>
-              {" "}
-              Flash{" "}
-            </Text>
+            <Ionicons
+              name={
+                flashMode === Camera.Constants.FlashMode.on
+                  ? "ios-flash"
+                  : "ios-flash-off"
+              }
+              style={{ color: "#fff", fontSize: 40 }}
+            />
           </TouchableOpacity>
 
           {/* alternate code for flipping the camera front to back */}
@@ -136,6 +142,7 @@ export default function App() {
                 alignSelf: "flex-end",
                 alignItems: "center",
                 backgroundColor: "transparent",
+                paddingBottom: 20,
               }}
             >
               <Ionicons
@@ -148,6 +155,7 @@ export default function App() {
                 alignSelf: "flex-end",
                 alignItems: "center",
                 backgroundColor: "transparent",
+                paddingBottom: 20,
               }}
             >
               <FontAwesome
@@ -166,6 +174,7 @@ export default function App() {
                 alignSelf: "flex-end",
                 alignItems: "center",
                 backgroundColor: "transparent",
+                paddingBottom: 20,
               }}
             >
               <MaterialCommunityIcons
