@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Text, View, TouchableOpacity } from "react-native";
+import { Text, View, TouchableOpacity, Alert, ImagePickerIOS } from "react-native";
 import { Camera } from "expo-camera";
 import {
   FontAwesome,
   Ionicons,
   MaterialCommunityIcons,
 } from "@expo/vector-icons";
+import * as Permissions from 'expo-permissions';
 
 export default function App() {
   const [hasPermission, setHasPermission] = useState(null);
@@ -27,6 +28,27 @@ export default function App() {
   }
   if (hasPermission === false) {
     return <Text>No access to camera</Text>;
+  }
+
+  const cameraRoll = props => {
+    const verifyPermissions = async() => {
+      const result = await Permissions.askAsync(Permissions.CAMERA_ROLL);
+      if (result.status !== 'granted') {
+        Alert.alert('Insufficient permissions!', 'You need to grant camera permissions to use this app.', [{ text: "Okay"}]);
+        return false;
+      }
+      return true;
+    }
+  }
+
+  const cameraRollHandler = async () => {
+    const hasCamRollPermissions = await verifyPermissions();
+    if (!hasCamRollPermissions) {
+      return;
+    }
+    await cameraRoll.launchImageLibraryAsync({
+      mediaTypes: ImagePickerIOS.MediaTypeOptions.Images,
+    });
   }
 
   return (
@@ -54,7 +76,7 @@ export default function App() {
             style={{
               flex: 0.1,
               alignSelf: "flex-end",
-              paddingTop: 90,
+              paddingTop: 70,
               marginRight: 30,
             }}
             onPress={() => {
@@ -75,60 +97,6 @@ export default function App() {
             />
           </TouchableOpacity>
 
-          {/* alternate code for flipping the camera front to back */}
-          {/* <TouchableOpacity
-            style={{
-              flex: 0.1,
-              alignSelf: "flex-end",
-            }}
-            onPress={() => {
-              setType(
-                type === Camera.Constants.Type.back
-                  ? Camera.Constants.Type.front
-                  : Camera.Constants.Type.back
-              );
-            }}
-          >
-            <Text style={{ fontSize: 18, marginBottom: 10, color: "white" }}>
-              {" "}
-              Flip{" "}
-            </Text>
-          </TouchableOpacity> */}
-
-          {/* touchable button for taking photo */}
-          {/* <TouchableOpacity
-            style={{ alignSelf: "center", marginBottom: 50 }}
-            onPress={async () => {
-              if (cameraRef) {
-                let photo = await cameraRef.takePictureAsync();
-                console.log("photo", photo);
-              }
-            }}
-          >
-            <View
-              style={{
-                borderWidth: 2,
-                borderRadius: "50%",
-                borderColor: "white",
-                height: 50,
-                width: 50,
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              <View
-                style={{
-                  borderWidth: 2,
-                  borderRadius: "50%",
-                  borderColor: "white",
-                  height: 40,
-                  width: 40,
-                  backgroundColor: "white",
-                }}
-              ></View>
-            </View>
-          </TouchableOpacity> */}
           <View
             style={{
               flex: 1,
@@ -148,6 +116,7 @@ export default function App() {
               <Ionicons
                 name="ios-photos"
                 style={{ color: "#fff", fontSize: 40 }}
+                onPress={cameraRollHandler}
               />
             </TouchableOpacity>
             <TouchableOpacity
