@@ -1,12 +1,20 @@
 import React, { useState, useEffect } from "react";
-import { Text, View, TouchableOpacity, Alert, ImagePickerIOS } from "react-native";
+import {
+  Text,
+  View,
+  TouchableOpacity,
+  Alert,
+  ImagePickerIOS,
+} from "react-native";
 import { Camera } from "expo-camera";
 import {
   FontAwesome,
   Ionicons,
   MaterialCommunityIcons,
 } from "@expo/vector-icons";
-import * as Permissions from 'expo-permissions';
+import * as Permissions from "expo-permissions";
+import * as ImagePicker from "expo-image-picker";
+
 
 export default function App() {
   const [hasPermission, setHasPermission] = useState(null);
@@ -30,26 +38,33 @@ export default function App() {
     return <Text>No access to camera</Text>;
   }
 
-  const cameraRoll = props => {
-    const verifyPermissions = async() => {
-      const result = await Permissions.askAsync(Permissions.CAMERA_ROLL);
-      if (result.status !== 'granted') {
-        Alert.alert('Insufficient permissions!', 'You need to grant camera permissions to use this app.', [{ text: "Okay"}]);
-        return false;
-      }
-      return true;
-    }
-  }
 
+  //get permission to camera roll
+  const verifyPermissions = async () => {
+    const result = await Permissions.askAsync(Permissions.CAMERA_ROLL);
+    if (result.status !== "granted") {
+      Alert.alert(
+        "Insufficient permissions!",
+        "You need to grant camera permissions to use this app.",
+        [{ text: "Okay" }]
+      );
+      return false;
+    }
+    return true;
+  };
+
+  //onPress event handler to access the camera roll
   const cameraRollHandler = async () => {
     const hasCamRollPermissions = await verifyPermissions();
     if (!hasCamRollPermissions) {
       return;
     }
-    await cameraRoll.launchImageLibraryAsync({
-      mediaTypes: ImagePickerIOS.MediaTypeOptions.Images,
+    await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
     });
-  }
+  };
+
+
 
   return (
     <View style={{ flex: 1 }}>
